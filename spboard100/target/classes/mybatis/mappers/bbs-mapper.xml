@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.musecom.spboard.dao.SpBoardMapper">
+
+  <sql id="bbsColumn">
+     refid,
+     depth,
+     renum,
+     title,
+     content,
+     writer,
+     pass,
+     userid,
+     hit,
+     chit,
+     wdate,
+     imnum
+  </sql>
+
+
+  <insert id="insert" parameterType="spBoardDto" useGeneratedKeys="true" keyProperty="id">
+     INSERT INTO jboard(<include refid="bbsColumn"/>) values (
+
+     <choose>
+        <when test="refid == 0">
+          0,
+          0,
+          1,              
+        </when>
+        <otherwise>
+          #{refid}, 
+          #{depth},
+          #{renum}, 
+        </otherwise>
+     </choose>
+       #{title},
+       #{content},
+       #{writer},
+       #{pass},
+       #{userid},
+       0,
+       0,
+       now(),
+       #{imnum}
+     )
+  </insert>
+
+  <update id="updateRefId" parameterType="int">
+     UPDATE jboard SET refid = #{id} WHERE id=#{id}
+  </update>
+
+  <update id="updateRenum" parameterType="hashMap">
+     UPDATE jboard SET renum = renum + 1 WHERE renum >= #{renum} and refid = #{refid}
+  </update>
+
+  <update id="update" parameterType="spBoardDto">
+     UPDATE jboard 
+     SET
+        title = #{title},
+        content = #{content},
+        writer = #{writer},
+        pass = #{pass}
+     WHERE
+        id=#{id}   
+  </update>
+  
+  <delete id="delete" parameterType="int">
+     DELETE FROM jboard
+     WHERE
+       id=#{selectId}  
+  </delete>
+  
+  <select id="selectTotalCount" resultType="int">
+     SELECT
+       COUNT(*)
+     FROM
+       jboard
+  </select>
+
+  <select id="selectList" resultType="spBoardDto" parameterType="hashMap">
+    SELECT * 
+    FROM 
+       jboard
+    where 1    
+    <if test="searchname != ''">
+       <choose>
+          <when test="searchname == 'title'">
+             and title Like 
+          </when>
+          <when test="searchname == 'writer'">
+             and writer Like
+          </when>
+          <otherwise>
+             and content Like
+          </otherwise>
+       </choose>
+       CONCAT('%', #{searchvalue}, '%')
+    </if>      
+    ORDER BY refid DESC, 
+    renum ASC 
+    LIMIT #{currentPage}, #{listCount}  
+  </select>  
+
+  <select id="selectDetail" resultType="spBoardDto" parameterType="int">
+     SELECT * FROM jboard WHERE id= #{selectId}
+  </select>
+ 
+  <update id="increaseHit" parameterType="int">
+     UPDATE jboard SET hit = hit + 1 WHERE id=#{selectId}
+  </update>
+  
+  <select id="validatePass" resultType="int" parameterType="hashMap">
+    SELECT count(*) FROM jboard WHERE id=#{id} and pass=#{pass}
+  </select>
+
+</mapper>
