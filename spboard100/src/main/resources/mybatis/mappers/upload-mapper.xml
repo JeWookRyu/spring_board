@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="net.musecom.spboard.dao.UploadMapper">
+    <!-- 
+        1. 파일등록 
+        2. 파일삭제 (해당파일삭제, jboard_id 에 해당하는 파일 삭제, 쓰레기파일 삭제) 
+        3. 업데이트 (jboard_id 입력)
+        4. 셀렉트 (해당파일 하나)
+        5. 셀렉트 (joboard_id )
+     --> 
+     <insert id="insertFile" parameterType="uploadDto">
+        INSERT INTO jboard_img
+           (jboard_id, ofilename, nfilename, ext, filesize, userid, imnum)
+        VALUES
+           (#{jboard_id}, #{ofilename}, #{nfilename}, #{ext}, #{filesize}, #{userid}, #{imnum})
+     </insert>
+     
+     <delete id="deleteFileById" parameterType="int">
+        DELETE FROM jboard_img WHERE id=#{selectId}
+     </delete>  
+     
+     <delete id="deleteFileByJboardId" parameterType="int">
+        DELETE FROM jboard_img WHERE jboard_id=#{boardId}
+     </delete>
+     
+     <delete id="deleteTrashFile">
+        DELETE FROM jboard_img WHERE jboard_id=0
+     </delete>
+     
+     <update id="updateFile" parameterType="hashMap">
+        UPDATE jboard_img SET jboard_id=#{jboard_id} WHERE imnum = #{imnum}
+     </update>
+        
+     <select id="selectById" resultType="uploadDto" parameterType="int">
+        SELECT * FROM jboard_img WHERE id=#{selectId}
+     </select>
+     
+     <select id="selectByBoardId" resultType="uploadDto" parameterType="int">
+        SELECT * FROM jboard_img WHERE jboard_id=#{boardId}
+     </select>
+     
+ </mapper> 
