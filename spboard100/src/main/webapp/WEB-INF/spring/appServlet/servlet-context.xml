@@ -46,7 +46,7 @@
 	  <beans:property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 	  <beans:property name="url" value="jdbc:mysql://localhost:3306/javaboard?useUnicode=true&amp;characterEncoding=utf-8" />
 	  <beans:property name="username" value="root" />
-	  <beans:property name="password" value="@wpdnr4923" />
+	  <beans:property name="password" value="1234" />
 	</beans:bean>
 	
 	<!-- SQL 세션 팩토리 설정 -->
